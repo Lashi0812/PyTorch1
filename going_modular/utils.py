@@ -3,6 +3,9 @@ Contains various utility functions for PyTorch model training and saving.
 """
 import torch
 from pathlib import Path
+from typing import Dict
+from typing import List
+import matplotlib.pyplot as plt
 
 
 def save_model(model: torch.nn.Module,
@@ -34,3 +37,29 @@ def save_model(model: torch.nn.Module,
     print(f"[INFO] Saving model to: {model_save_path}")
     torch.save(obj=model.state_dict(),
                f=model_save_path)
+
+
+def plot_loss_curve(history: Dict[str, List[float]]):
+    epochs_range = range(len(history["train_loss"]))
+
+    plt.figure(figsize=(8, 3))
+
+    # Plot the loss
+    plt.subplot(121)
+    plt.plot(epochs_range, history["train_loss"], label="Training")
+    plt.plot(epochs_range, history["test_loss"], label="Testing")
+    plt.title("Loss")
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    plt.legend()
+
+    # Plot the loss
+    plt.subplot(122)
+    plt.plot(epochs_range, history["train_acc"], label="Training")
+    plt.plot(epochs_range, history["test_acc"], label="Testing")
+    plt.title("Accuracy")
+    plt.xlabel("Epochs")
+    plt.ylabel("Accuracy")
+    plt.legend()
+
+    plt.tight_layout()
