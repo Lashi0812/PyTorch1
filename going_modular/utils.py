@@ -7,6 +7,8 @@ from typing import Dict
 from typing import List
 import matplotlib.pyplot as plt
 
+from collections import defaultdict
+
 
 def save_model(model: torch.nn.Module,
                target_dir: str,
@@ -63,3 +65,27 @@ def plot_loss_curve(history: Dict[str, List[float]]):
     plt.legend()
 
     plt.tight_layout()
+
+
+def print_model_meta_info(model: torch.nn.Module) -> None:
+    """
+    This function will print number of module in the model and print the number layer in each module
+    :param model:
+    :return:
+    """
+    print(f"There are {len(list(model.named_children()))} module namely")
+    for block_name, layers in model.named_children():
+        if isinstance(layers, torch.nn.Sequential):
+            print(f"\t {block_name} module contains {len(layers)} layers/block.")
+        else:
+            print(f"\t {block_name} module contains 1 layer.")
+
+    instance_dict = defaultdict(int)
+    total_layer = 0
+    for module in model.modules():
+        if not hasattr(module, "__len__"):
+            total_layer += 1
+        instance_dict[module.__class__.__name__] += 1
+
+    print(f"Total layer are {total_layer}")
+    print(instance_dict)
